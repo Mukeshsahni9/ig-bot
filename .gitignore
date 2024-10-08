@@ -1,0 +1,39 @@
+# Node.js dependencies
+/node_modules
+/npm-debug.log
+/yarn-debug.log
+/yarn-error.log
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Vercel files
+.vercel
+
+# Coverage directory used by testing tools
+coverage
+
+# MacOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
