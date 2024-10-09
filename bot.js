@@ -6,33 +6,8 @@ import axios from 'axios';
 dotenv.config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const channelUsername = process.env.CHANNEL_USERNAME || '@bot_by_isenpai9840';
-const PORT = process.env.PORT || 3000;
 
 const userStates = new Map(); // To track user task states
-
-// Middleware to check if the user has joined the channel
-const checkSubscription = async (ctx) => {
-    try {
-        const chatMember = await ctx.telegram.getChatMember(channelUsername, ctx.message.from.id);
-        if (chatMember.status === 'member' || chatMember.status === 'administrator' || chatMember.status === 'creator') {
-            return true;
-        } else {
-            await ctx.reply(`Please join our channel to use the bot:`, {
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: 'Join Channel', url: `https://t.me/${channelUsername.slice(1)}` }]
-                    ]
-                }
-            });
-            return false;
-        }
-    } catch (error) {
-        console.error('Error checking subscription:', error);
-        await ctx.reply('There was an error checking your subscription status. Please try again later.');
-        return false;
-    }
-};
 
 // Function to terminate current task
 const terminateTask = (ctx) => {
@@ -44,19 +19,13 @@ const terminateTask = (ctx) => {
     return ctx.reply('No active task to terminate.');
 };
 
-// Start command with subscription check
+// Start command
 bot.start(async (ctx) => {
-    const isSubscribed = await checkSubscription(ctx);
-    if (isSubscribed) {
-        await ctx.reply('Welcome! Please send me the Instagram reel link, and I will get the video for you.');
-    }
+    await ctx.reply('Welcome! Please send me the Instagram reel link, and I will get the video for you.');
 });
 
 // Listen for Instagram links and manage task state
 bot.on('text', async (ctx) => {
-    const isSubscribed = await checkSubscription(ctx);
-    if (!isSubscribed) return;
-
     const userId = ctx.message.from.id;
 
     // If the user already has an ongoing task
@@ -89,6 +58,15 @@ bot.on('text', async (ctx) => {
             // Send the video buffer as a file
             await ctx.replyWithVideo({ source: videoBuffer });
 
+            // Send the channel button message
+            await ctx.reply('Join our channel for more useful bots:', {
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: 'Join Channel', url: `https://t.me/${process.env.CHANNEL_USERNAME.slice(1)}` }]
+                    ]
+                }
+            });
+
             // Remove the user from the active task list once the task is done
             userStates.delete(userId);
         } catch (error) {
@@ -111,13 +89,7 @@ bot.on('callback_query', async (ctx) => {
     await ctx.answerCbQuery(); // Close the button prompt
 });
 
-// Start the bot and listen for webhooks
-const WEBHOOK_URL = `${process.env.RENDER_EXTERNAL_URL}/bot${process.env.BOT_TOKEN}`;
-
-// Set webhook for the bot
-bot.telegram.setWebhook(WEBHOOK_URL);
-
-// Start listening for incoming updates
-bot.startWebhook(`/bot${process.env.BOT_TOKEN}`, null, PORT);
-
-console.log('Bot is running and ready to receive webhooks');
+// Start the bot
+bot.launch().then(() => {
+    console.log('Bot is running and ready to receive messages');
+});
