@@ -7,6 +7,7 @@ dotenv.config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const channelUsername = process.env.CHANNEL_USERNAME || '@bot_by_isenpai9840';
+const PORT = process.env.PORT || 3000;
 
 const userStates = new Map(); // To track user task states
 
@@ -110,7 +111,13 @@ bot.on('callback_query', async (ctx) => {
     await ctx.answerCbQuery(); // Close the button prompt
 });
 
-// Start the bot with polling
-bot.launch().then(() => {
-    console.log('Bot is running and ready to receive messages');
-});
+// Start the bot and listen for webhooks
+const WEBHOOK_URL = `${process.env.RENDER_EXTERNAL_URL}/bot${process.env.BOT_TOKEN}`;
+
+// Set webhook for the bot
+bot.telegram.setWebhook(WEBHOOK_URL);
+
+// Start listening for incoming updates
+bot.startWebhook(`/bot${process.env.BOT_TOKEN}`, null, PORT);
+
+console.log('Bot is running and ready to receive webhooks');
