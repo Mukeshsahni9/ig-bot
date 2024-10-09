@@ -111,7 +111,7 @@ bot.on('callback_query', async (ctx) => {
 });
 
 // Set webhook for the bot
-const WEBHOOK_URL = `https://${process.env.RENDER_EXTERNAL_URL}/bot${process.env.BOT_TOKEN}`;
+const WEBHOOK_URL = `${process.env.RENDER_EXTERNAL_URL}/bot${process.env.BOT_TOKEN}`;
 
 bot.telegram.setWebhook(WEBHOOK_URL);
 
