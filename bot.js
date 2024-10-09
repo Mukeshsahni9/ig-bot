@@ -3,12 +3,7 @@ import instagram from 'instagram-url-direct';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
-
-
 dotenv.config();
-
-
-const PORT = process.env.PORT || 3000
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const channelUsername = process.env.CHANNEL_USERNAME || '@bot_by_isenpai9840';
@@ -86,7 +81,7 @@ bot.on('text', async (ctx) => {
             const result = await instagram(messageText);
             const videoUrl = result.url_list[0];
 
-            // Fetch the video using ===
+            // Fetch the video using Axios
             const videoResponse = await axios.get(videoUrl, { responseType: 'arraybuffer' });
             const videoBuffer = Buffer.from(videoResponse.data);
 
@@ -115,6 +110,12 @@ bot.on('callback_query', async (ctx) => {
     await ctx.answerCbQuery(); // Close the button prompt
 });
 
-bot.launch().then(() => {
-    console.log('Bot is up and running with Node.js');
-});
+// Set webhook for the bot
+const WEBHOOK_URL = `https://${process.env.RENDER_EXTERNAL_URL}/bot${process.env.BOT_TOKEN}`;
+
+bot.telegram.setWebhook(WEBHOOK_URL);
+
+// Start the bot and listen for webhooks
+bot.startWebhook(`/bot${process.env.BOT_TOKEN}`, null, process.env.PORT || 3000);
+
+console.log('Bot is running and ready to receive webhooks');
