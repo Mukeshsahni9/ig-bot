@@ -3,7 +3,12 @@ import instagram from 'instagram-url-direct';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
+
+
 dotenv.config();
+
+
+const PORT = process.env.PORT || 3000
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const channelUsername = process.env.CHANNEL_USERNAME || '@bot_by_isenpai9840';
