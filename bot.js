@@ -110,12 +110,7 @@ bot.on('callback_query', async (ctx) => {
     await ctx.answerCbQuery(); // Close the button prompt
 });
 
-// Set webhook for the bot
-const WEBHOOK_URL = `${process.env.RENDER_EXTERNAL_URL}/bot${process.env.BOT_TOKEN}`;
-
-bot.telegram.setWebhook(WEBHOOK_URL);
-
-// Start the bot and listen for webhooks
-bot.startWebhook(`/bot${process.env.BOT_TOKEN}`, null, process.env.PORT || 3000);
-
-console.log('Bot is running and ready to receive webhooks');
+// Start the bot with polling
+bot.launch().then(() => {
+    console.log('Bot is running and ready to receive messages');
+});
