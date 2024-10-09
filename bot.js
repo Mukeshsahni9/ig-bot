@@ -81,7 +81,7 @@ bot.on('text', async (ctx) => {
             const result = await instagram(messageText);
             const videoUrl = result.url_list[0];
 
-            // Fetch the video using axios
+            // Fetch the video using ===
             const videoResponse = await axios.get(videoUrl, { responseType: 'arraybuffer' });
             const videoBuffer = Buffer.from(videoResponse.data);
 
